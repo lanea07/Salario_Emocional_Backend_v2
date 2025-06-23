@@ -16,4 +16,5 @@ return [
     'user_updated_succesfully' => 'Usuario actualizado',
     'user_updated_failed' => 'Error al actualizar el usuario',
     'jwt_invalid_unauthorized' => 'Token inválido, acceso denegado',
+    'password_reset_successful' => 'Contraseña restablecida exitosamente',
 ];

@@ -27,5 +27,5 @@ return [
     'user_updated_succesfully' => 'User updated',
     'user_updated_failed' => 'Failed to update user',
     'jwt_invalid_unauthorized' => 'Invalid token, access denied',
-
+    'password_reset_successful' => 'Password reset successful',
 ];

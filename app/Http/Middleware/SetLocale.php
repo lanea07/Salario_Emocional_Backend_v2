@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SetLocale {
     
     public function handle(Request $request, Closure $next): Response {
-        $locale = $request->route('lang');
+        $locale = $request->query('lang');
 
         if (!in_array($locale, ['en', 'es'])) {
             $locale = config('app.fallback_locale');

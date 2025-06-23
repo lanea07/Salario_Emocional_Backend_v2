@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\ForbiddenActionException;
 use App\Traits\ValidatesPermissions;
 use Closure;
 use Illuminate\Http\Request;
@@ -20,11 +19,10 @@ class ValidateActions {
     public function handle(Request $request, Closure $next): Response {
         $route = $request->route();
 
-        if(!isset($route?->defaults['permissions']) || !count($route?->defaults['permissions'])) throw new ForbiddenActionException();
-
-        $permissions = $route?->defaults['permissions'];
+        $endSession = $route?->defaults['endSession'] ?? true;
+        $permissions = $route?->defaults['permissions'] ?? [];
         $permissions = array_map('intval', $permissions);
-        self::hasPermissions($permissions, true);
+        self::hasPermissions($permissions, $endSession);
         return $next($request);
     }
 }

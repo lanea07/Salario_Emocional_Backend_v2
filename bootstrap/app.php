@@ -25,4 +25,19 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
-    })->create();
+    })
+    ->withSchedule(function ($schedule) {
+        $schedule->command('birthday:check')->everyMinute()->when(function () {
+            $initialDate = new Carbon();
+            return Cron::shouldIRun('birthday:check', CarbonTimePeriodsEnum::addMonths, 1, CarbonBoundariesEnum::startOfMonth, $initialDate->toDateString(), 8);
+        });
+        $schedule->command('sanctum:prune-expired --hours=24')->when(function () {
+            $initialDate = new Carbon();
+            return Cron::shouldIRun('sanctum:prune-expired --hours=24', CarbonTimePeriodsEnum::addDays, 1, CarbonBoundariesEnum::startOfDay, $initialDate->toDateString());
+        });
+        $schedule->command('reject-old-benefit-requests')->when(function () {
+            $initialDate = new Carbon();
+            return Cron::shouldIRun('reject-old-benefit-requests', CarbonTimePeriodsEnum::addDays, 1, CarbonBoundariesEnum::startOfDay, $initialDate->toDateString(), 0);
+        });
+    })
+    ->create();

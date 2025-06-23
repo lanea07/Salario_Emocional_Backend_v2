@@ -10,9 +10,9 @@ class ApiResponseFactory {
 
     public static function make(): ApiResponseContract {
 
-        $path = request()->path();
+        $path = request()->query('version', 'v1');
 
-        if (str_starts_with($path, 'api/v2')) {
+        if (str_starts_with($path, 'v2')) {
             return new ApiV2ResponseService();
         }
 

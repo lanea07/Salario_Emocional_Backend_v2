@@ -6,6 +6,8 @@ use App\Enums\HttpStatusCodes;
 use App\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +15,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
 class AuthController extends Controller {
+
+    public function __construct(private AuthService $authService) {
+    }
 
     public function register(Request $request) {
         $request->validate([
@@ -54,6 +59,7 @@ class AuthController extends Controller {
         return ApiResponse::sendResponse(data: [
             'token' => $token,
             'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'actions' => Auth::user()->getAllPermissions()->pluck('id')->toArray()
         ], message: __('auth.login_succesful'), httpCode: HttpStatusCodes::OK_200, cookie: $cookie);
     }
 
@@ -88,5 +94,42 @@ class AuthController extends Controller {
         } catch (JWTException $e) {
             return ApiResponse::sendResponse($e->getMessage(), __('auth.user_updated_failed'), HttpStatusCodes::INTERNAL_SERVER_ERROR_500);
         }
+    }
+
+    /**
+     * Validate if the user needs to change the password
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateRequirePassChange(): JsonResponse {
+        return ApiResponse::sendResponse(auth()->user()->requirePassChange());
+    }
+
+    /**
+     * Change the password of the user
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function passwordChange(Request $request): JsonResponse {
+        $this->authService->validatePasswordChange($request);
+        return ApiResponse::sendResponse(__('auth.password_reset_successful'));
+    }
+
+    /**
+     * Log in as another user
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function loginAs(Request $request): JsonResponse {
+        $currentUser = auth()->user();
+        $loginAsUserID = $request->user_id;
+        return $this->authService->loginAs($currentUser, $loginAsUserID);
+    }
+
+    public function forgotPassword(Request $request): JsonResponse {
+        $this->authService->forgotPassword($request);
+        return ApiResponse::sendResponse();
     }
 }

@@ -14,7 +14,7 @@ class ValidateApiVersion {
     protected array $allowedVersions = ['v1', 'v2'];
 
     public function handle(Request $request, Closure $next): Response {
-        $version = $request->route('version');
+        $version = $request->query('version');
 
         if (!in_array($version, $this->allowedVersions, true)) {
             $data = [
