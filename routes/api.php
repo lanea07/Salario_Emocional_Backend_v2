@@ -15,8 +15,13 @@ use App\Http\Controllers\Auth\AuthController;
 Route::middleware(['setLocale', 'validateApiVersion'])
     ->group(function () {
 
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::controller(AuthController::class)->group(function () {
+            Route::post('/register', 'register');
+            Route::post('/login', 'login');
+            Route::post('/validate-requirePassChange', 'validateRequirePassChange');
+            Route::post('/validate-token', 'validateToken');
+            Route::post('/validate-roles', 'validateAdmin');
+        });
 
         Route::middleware(['jwt', 'hasActions'])->group(function () {
 
@@ -24,7 +29,6 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::get('/user', 'getUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::post('/logout', 'logout')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::put('/user', 'updateUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
-                Route::post('/validate-requirePassChange', 'validateRequirePassChange');
                 Route::post('/passwordChange', 'passwordChange');
                 Route::post('login-as', 'loginAs');
                 Route::post('forgot-password', 'forgotPassword')->withoutMiddleware('auth:sanctum');;
@@ -83,6 +87,7 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::get('/{position}/edit', 'edit')->name('position.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
             });
 
+            // TODO: enable this route with the corresponding values
             // Route::prefix('role')->controller(RoleController::class)->group(function () {
             //     Route::get('/role/create', 'create')->name('role.create')->defaults('permissions', [1, 100])->defaults('endSession', true);
             //     Route::delete('/role/{role}', 'destroy')->name('role.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
@@ -126,9 +131,9 @@ Route::middleware(['setLocale', 'validateApiVersion'])
             });
 
             Route::prefix('user-preferences')->controller(PreferencesController::class)->group(function () {
-                Route::get('/', 'index')->name('preferences.index');
-                Route::get('/{user}', 'show')->name('preferences.show');
-                Route::put('/{user}', 'store')->name('preferences.store');
+                Route::get('/', 'index')->name('preferences.index')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::get('/{user}', 'show')->name('preferences.show')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::put('/{user}', 'store')->name('preferences.store')->defaults('permissions', [1, 100])->defaults('endSession', true);
             });
         });
     });

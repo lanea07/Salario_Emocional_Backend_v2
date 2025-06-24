@@ -10,7 +10,6 @@ use App\Http\Requests\StoreDependencyRequest;
 use App\Http\Requests\UpdateDependencyRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Throwable;
 
 class DependencyController extends Controller {
 
@@ -32,11 +31,8 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(StoreDependencyRequest $request): JsonResponse {
-        try {
-            return response()->json($this->dependencyService->saveDependency($request->validated()), 201);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 400);
-        }
+        $createdDependency = $this->dependencyService->saveDependency($request->validated());
+        return ApiResponse::sendResponse($createdDependency);
     }
 
     /**
@@ -46,7 +42,8 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Dependency $dependency): JsonResponse {
-        return response()->json($this->dependencyService->getDependencyById($dependency), 200);
+        $data = $this->dependencyService->getDependencyById($dependency);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -56,11 +53,8 @@ class DependencyController extends Controller {
      * @param  \App\Models\Dependency  $dependency
      */
     public function update(UpdateDependencyRequest $request, Dependency $dependency): JsonResponse {
-        try {
-            return response()->json($this->dependencyService->updatedependency($request->validated(), $dependency), 200);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 400);
-        }
+        $updatedDependency = $this->dependencyService->updatedependency($request->validated(), $dependency);
+        return ApiResponse::sendResponse($updatedDependency);
     }
 
     /**
@@ -71,12 +65,8 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Dependency $dependency): JsonResponse {
-        try {
-            $this->dependencyService->deleteDependency($dependency);
-            return response()->json(['message' => 'Dependencia eliminada'], 200);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+        $this->dependencyService->deleteDependency($dependency);
+        return ApiResponse::sendResponse(__('controllers/dependency-controller.dependency_deleted'), resetJWT: true);
     }
 
     /**
@@ -86,7 +76,8 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function indexAncestors(Request $request) {
-        return response()->json($this->dependencyService->getAllDependenciesAncestors($request), 200);
+        $data = $this->dependencyService->getAllDependenciesAncestors($request);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -96,7 +87,8 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function getNonTreeValidDependencies() {
-        return response()->json($this->dependencyService->getNonTreeValidDependencies(), 200);
+        $data = $this->dependencyService->getNonTreeValidDependencies();
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -105,10 +97,7 @@ class DependencyController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function datatable() {
-        try {
-            return response()->json($this->dependencyService->getDatatable(), 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+        $data = $this->dependencyService->getDatatable();
+        return ApiResponse::sendResponse($data);
     }
 }

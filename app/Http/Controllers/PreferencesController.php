@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\ApiResponse;
 use App\Services\PreferencesService;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PreferencesController extends Controller
-{
+class PreferencesController extends Controller {
 
-    public function __construct(private PreferencesService $preferencesService)
-    {
+    public function __construct(private PreferencesService $preferencesService) {
     }
 
     /**
@@ -20,9 +19,9 @@ class PreferencesController extends Controller
      * 
      * @return JsonResponse
      */
-    public function index(): JsonResponse
-    {
-        return response()->json($this->preferencesService->getAllAvailablePreferences(), 200);
+    public function index(): JsonResponse {
+        $data = $this->preferencesService->getAllAvailablePreferences();
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -31,9 +30,9 @@ class PreferencesController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function show(User $user): JsonResponse
-    {
-        return response()->json($this->preferencesService->userPreferences($user), 200);
+    public function show(User $user): JsonResponse {
+        $data = $this->preferencesService->userPreferences($user);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -42,13 +41,9 @@ class PreferencesController extends Controller
      * @param  Request  $request
      * @return JsonResponse
      */
-    public function store(User $user): JsonResponse
-    {
-        try {
-            $request = request();
-            return response()->json($this->preferencesService->savePreferences($user, $request->all()), 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => 'Error al guardar las preferencias'], 500);
-        }
+    public function store(User $user): JsonResponse {
+        $request = request();
+        $createdPreference = $this->preferencesService->savePreferences($user, $request->all());
+        return ApiResponse::sendResponse($createdPreference);
     }
 }

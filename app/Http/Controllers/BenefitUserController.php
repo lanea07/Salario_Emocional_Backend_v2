@@ -11,7 +11,6 @@ use App\Models\BenefitUser;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Throwable;
 
 class BenefitUserController extends Controller {
 
@@ -73,7 +72,7 @@ class BenefitUserController extends Controller {
      */
     public function destroy(BenefitUser $benefituser): JsonResponse {
         $this->benefitUserService->deleteBenefitUser($benefituser);
-        return ApiResponse::sendResponse(__('controllers/benefit-user-controller.benefit_user_deleted'), HttpStatusCodes::CREATED_201);
+        return ApiResponse::sendResponse(__('controllers/benefit-user-controller.benefit_user_deleted'), resetJWT: true);
     }
 
     /**
@@ -103,7 +102,7 @@ class BenefitUserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function indexCollaboratorsNonApproved(): JsonResponse {
+    public function indexCollaboratorsNonApproved() {
         $data = $this->benefitUserService->getAllBenefitCollaboratorsNonApproved(request());
         return ApiResponse::sendResponse($data);
     }

@@ -2,21 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\Role;
+use App\Enums\HttpStatusCodes;
+use App\Facades\ApiResponse;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
-class RoleService
-{
+class RoleService {
 
     /**
      * Get all roles
      *
      * @return Illuminate\Database\Eloquent\Collection
      */
-    public function getAllRoles(): Collection
-    {
+    public function getAllRoles(): Collection {
         return Role::all();
     }
 
@@ -26,8 +27,7 @@ class RoleService
      * @param  array  $roleData
      * @return Role
      */
-    public function saveRole(array $roleData): Role
-    {
+    public function saveRole(array $roleData): Role {
         $created = DB::transaction(function () use ($roleData) {
             return Role::create($roleData);
         });
@@ -40,20 +40,18 @@ class RoleService
      * @param  Role $role
      * @return Role
      */
-    public function getRoleById(Role $role): Role
-    {
+    public function getRoleById(Role $role): Role {
         return $role;
     }
 
     /**
      * Update a role
      *
-     * @param  array  $roleData
-     * @param  Role $role
-     * @return Role
+     * @param array  $roleData
+     * @param Spatie\Permission\Models\Role $role
+     * @return Spatie\Permission\Models\Role $role
      */
-    public function updateRole(array $roleData, Role $role): Role
-    {
+    public function updateRole(array $roleData, Role $role): Role {
         $updated = DB::transaction(function () use ($roleData, $role) {
             return tap($role)->update($roleData);
         });
@@ -64,16 +62,14 @@ class RoleService
      * Delete a role
      *
      * @param  Role $role
-     * @return void
+     * @return JsonResponse
      * @throws \Exception
      */
-    public function deleteRole(Role $role): void
-    {
-        throw new \Exception('No se puede eliminar un rol');
+    public function deleteRole(Role $role): JsonResponse {
+        return ApiResponse::sendResponse(message: __('controllers/role-controller.role_deleted'), httpCode: HttpStatusCodes::FORBIDDEN_403);
     }
 
-    public function getDatatable()
-    {
+    public function getDatatable() {
         $model = Role::query();
         return DataTables::of($model)->toJson();
     }

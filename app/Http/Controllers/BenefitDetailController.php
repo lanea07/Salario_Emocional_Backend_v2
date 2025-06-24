@@ -22,7 +22,7 @@ class BenefitDetailController extends Controller {
      */
     public function index(): JsonResponse {
         $data = $this->benefitDetailService->getAllBenefitDetail();
-        return ApiResponse::success($data);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -33,7 +33,7 @@ class BenefitDetailController extends Controller {
      */
     public function store(CreateBenefitDetailRequest $request): JsonResponse {
         $createdBenefitDetail = $this->benefitDetailService->saveBenefitDetail($request->name);
-        return ApiResponse::success(data: $createdBenefitDetail, httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
+        return ApiResponse::sendResponse(data: $createdBenefitDetail, httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
     }
 
     /**

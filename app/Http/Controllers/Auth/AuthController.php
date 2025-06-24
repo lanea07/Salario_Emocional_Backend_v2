@@ -56,11 +56,15 @@ class AuthController extends Controller {
         }
 
         $cookie = cookie('token', $token, env('COOKIE_LIFETIME', 60), null, null, true, true, false, 'Strict');
-        return ApiResponse::sendResponse(data: [
+
+        $authData = [
             'token' => $token,
             'expires_in' => auth('api')->factory()->getTTL() * 60,
-            'actions' => Auth::user()->getAllPermissions()->pluck('id')->toArray()
-        ], message: __('auth.login_succesful'), httpCode: HttpStatusCodes::OK_200, cookie: $cookie);
+            'actions' => Auth::user()->getAllPermissions()->pluck('id')->toArray(),
+            'user' => Auth::user()->only('name', 'email', 'id'),
+        ];
+
+        return ApiResponse::sendResponse(data: $authData, message: __('auth.login_succesful'), httpCode: HttpStatusCodes::OK_200, cookie: $cookie);
     }
 
     public function logout() {
@@ -102,6 +106,9 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\JsonResponse
      */
     public function validateRequirePassChange(): JsonResponse {
+        if(!auth()->user()) {
+            return ApiResponse::sendResponse(false);
+        }
         return ApiResponse::sendResponse(auth()->user()->requirePassChange());
     }
 
@@ -131,5 +138,14 @@ class AuthController extends Controller {
     public function forgotPassword(Request $request): JsonResponse {
         $this->authService->forgotPassword($request);
         return ApiResponse::sendResponse();
+    }
+
+    /**
+     * Validate if the token is valid
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function validateToken(): JsonResponse {
+        return ApiResponse::sendResponse(auth()->check());
     }
 }

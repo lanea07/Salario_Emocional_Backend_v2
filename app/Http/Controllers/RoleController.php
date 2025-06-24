@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\HttpStatusCodes;
+use App\Facades\ApiResponse;
 use App\Services\RoleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRoleRequest;
-use App\Models\Role;
 use Illuminate\Http\JsonResponse;
-use Throwable;
+use \Spatie\Permission\Models\Role;
 
-class RoleController extends Controller
-{
+class RoleController extends Controller {
 
-    public function __construct(private RoleService $roleService)
-    {
+    // TODO: This controller must create spatie roles, not native app roles
+    public function __construct(private RoleService $roleService) {
     }
 
     /**
@@ -21,9 +21,9 @@ class RoleController extends Controller
      *
      * @return Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse
-    {
-        return response()->json($this->roleService->getAllRoles(), 200);
+    public function index(): JsonResponse {
+        $data = $this->roleService->getAllRoles();
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -32,64 +32,47 @@ class RoleController extends Controller
      * @param  \App\Http\Requests\CreateRoleRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateRoleRequest $request): JsonResponse
-    {
-        try {
-            return response()->json($role = $this->roleService->saveRole($request->validated()), 201);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 400);
-        }
+    public function store(CreateRoleRequest $request): JsonResponse {
+        $createdRole = $this->roleService->saveRole($request->validated());
+        return ApiResponse::sendResponse($createdRole);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Role  $role
+     * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Role $role): JsonResponse
-    {
-        return response()->json($this->roleService->getRoleById($role), 200);
+    public function show(Role $role): JsonResponse {
+        $data = $this->roleService->getRoleById($role);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\CreateRoleRequest  $request
-     * @param  \App\Models\Role  $role
+     * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateRoleRequest $request, Role $role): JsonResponse
-    {
-        try {
-            return response()->json($role = $this->roleService->updateRole($request->validated(), $role), 200);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 400);
-        }
+    public function update(CreateRoleRequest $request, Role $role): JsonResponse {
+        $updatedRole = $this->roleService->updateRole($request->validated(), $role);
+        return ApiResponse::sendResponse($updatedRole);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
+     * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Role $role): JsonResponse
-    {
-        try {
-            $this->roleService->deleteRole($role);
-            return response()->json(['message' => 'Rol eliminado'], 200);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+    public function destroy(Role $role): JsonResponse {
+        $this->roleService->deleteRole($role);
+        return ApiResponse::sendResponse(message: __('controllers/role-controller.role_deleted'), httpCode: HttpStatusCodes::FORBIDDEN_403);
     }
 
-    public function datatable()
-    {
-        try {
-            return response()->json($this->roleService->getDatatable(), 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+    public function datatable() {
+        $data = $this->roleService->getDatatable();
+        return ApiResponse::sendResponse($data);
     }
 }

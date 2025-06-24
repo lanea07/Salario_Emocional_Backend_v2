@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\HttpStatusCodes;
+use App\Facades\ApiResponse;
 use App\Services\UserService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Throwable;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
 
-    public function __construct(private UserService $userService)
-    {
+    public function __construct(private UserService $userService) {
     }
 
     /**
@@ -21,9 +20,9 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse
-    {
-        return response()->json($this->userService->getAllUsers(), 200);
+    public function index(): JsonResponse {
+        $data = $this->userService->getAllUsers();
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -33,23 +32,23 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateUserRequest $request): JsonResponse
-    {
+    public function store(CreateUserRequest $request): JsonResponse {
         try {
-            return response()->json($this->userService->saveUser($request->validated()), 201);
+            $createdUser = $this->userService->saveUser($request->validated());
+            return ApiResponse::sendResponse(data: $createdUser, httpCode: HttpStatusCodes::CREATED_201);
         } catch (\Illuminate\Database\QueryException $th) {
             switch ($th->errorInfo[1]) {
                 case 1062:
-                    return response()->json(['message' => 'No se puede guardar el usuario porque ya existe un usuario con el mismo correo registrado.'], 400);
+                    return ApiResponse::sendResponse(message: 'No se puede guardar el usuario porque ya existe un usuario con el mismo correo registrado.', httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 case 4025:
-                    return response()->json(['message' => $th->errorInfo[2]], 400);
+                    return ApiResponse::sendResponse(message: $th->errorInfo[2], httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 case 1:
-                    return response()->json(['message' => $th->errorInfo[2]], 400);
+                    return ApiResponse::sendResponse(message: $th->errorInfo[2], httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 default:
-                    return response()->json(['message' => 'Ha ocurrido un error interno, contacte con el administrador'], 400);
+                    return ApiResponse::sendResponse(message: 'Ha ocurrido un error interno, contacte con el administrador', httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
             }
         }
@@ -62,9 +61,9 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(User $user): JsonResponse
-    {
-        return response()->json($this->userService->getUserById($user), 200);
+    public function show(User $user): JsonResponse {
+        $data = $this->userService->getUserById($user);
+        return ApiResponse::sendResponse($data);
     }
 
     /**
@@ -75,23 +74,23 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateUserRequest $request, User $user): JsonResponse
-    {
+    public function update(CreateUserRequest $request, User $user): JsonResponse {
         try {
-            return response()->json($this->userService->updateUser($request->validated(), $user), 200);
+            $updatedUser = $this->userService->updateUser($request->validated(), $user);
+            return ApiResponse::sendResponse($updatedUser);
         } catch (\Illuminate\Database\QueryException $th) {
             switch ($th->errorInfo[1]) {
                 case 1062:
-                    return response()->json(['message' => 'No se puede actualizar el usuario porque ya existe un usuario con el mismo correo registrado.'], 400);
+                    return ApiResponse::sendResponse(message: 'No se puede actualizar el usuario porque ya existe un usuario con el mismo correo registrado.', httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 case 4025:
-                    return response()->json(['message' => $th->errorInfo[2]], 400);
+                    return ApiResponse::sendResponse(message: $th->errorInfo[2], httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 case 1:
-                    return response()->json(['message' => $th->errorInfo[2]], 400);
+                    return ApiResponse::sendResponse(message: $th->errorInfo[2], httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
                 default:
-                    return response()->json(['message' => 'Ha ocurrido un error interno, contacte con el administrador'], 400);
+                    return ApiResponse::sendResponse(message: 'Ha ocurrido un error interno, contacte con el administrador', httpCode: HttpStatusCodes::BAD_REQUEST_400);
                     break;
             }
         }
@@ -104,14 +103,9 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user): JsonResponse
-    {
-        try {
-            $this->userService->deleteUser($user);
-            return response()->json(['message' => 'Usuario eliminado'], 200);
-        } catch (Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+    public function destroy(User $user): JsonResponse {
+        $this->userService->deleteUser($user);
+        return ApiResponse::sendResponse(message: __('controllers/user-controller.user_deleted'), httpCode: HttpStatusCodes::FORBIDDEN_403);
     }
 
     /**
@@ -119,17 +113,13 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function indexDescendants(): JsonResponse
-    {
-        return response()->json($this->userService->getAllDescendants(), 200);
+    public function indexDescendants(): JsonResponse {
+        $data = $this->userService->getAllDescendants();
+        return ApiResponse::sendResponse($data);
     }
 
-    public function datatable(): JsonResponse
-    {
-        try {
-            return response()->json($this->userService->getDatatable(), 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
+    public function datatable(): JsonResponse {
+        $data = $this->userService->getDatatable();
+        return ApiResponse::sendResponse($data);
     }
 }
