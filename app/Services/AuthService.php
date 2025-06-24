@@ -6,11 +6,13 @@ use App\Mail\PasswordForgottenNewPass;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
@@ -74,22 +76,21 @@ class AuthService
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function loginAs(User $currentUser, int $loginAsUser): JsonResponse
+    public function loginAs(User $currentUser, int $loginAsUser): mixed
     {
         if (!$currentUser->isAdmin()) {
             throw new \Exception('No tienes permisos para realizar esta acción');
         }
         $user = User::find($loginAsUser);
-        return response()->json(
-            [
-                'token' => $user->createToken(request()->device_name, ['*'], now()->addDay())->plainTextToken,
-                'id' => $user->id,
-                'user' => $user->only('name', 'email', 'id'),
-                'admin' => (bool)$user->isAdmin(),
-                'simulated' => true,
-            ],
-            200
-        );
+        $token = auth()->tokenById($user->id);
+        $authData = [
+            'token' => $token,
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'actions' => $user->getAllPermissions()->pluck('id')->toArray(),
+            'user' => $user->only('name', 'email', 'id'),
+            'simulated' => true
+        ];
+        return $authData;
     }
 
     public function forgotPassword(Request $request): void

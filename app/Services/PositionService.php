@@ -75,6 +75,6 @@ class PositionService
     public function getDatatable()
     {
         $model = Position::where('id', '<>', 1);
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

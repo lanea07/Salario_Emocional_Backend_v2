@@ -12,7 +12,6 @@ use \Spatie\Permission\Models\Role;
 
 class RoleController extends Controller {
 
-    // TODO: This controller must create spatie roles, not native app roles
     public function __construct(private RoleService $roleService) {
     }
 

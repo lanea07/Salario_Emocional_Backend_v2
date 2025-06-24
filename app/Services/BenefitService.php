@@ -218,6 +218,6 @@ class BenefitService
     public function getDataTable()
     {
         $model = Benefit::with(['benefit_detail']);
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

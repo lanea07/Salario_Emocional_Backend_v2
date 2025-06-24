@@ -132,7 +132,10 @@ class AuthController extends Controller {
     public function loginAs(Request $request): JsonResponse {
         $currentUser = auth()->user();
         $loginAsUserID = $request->user_id;
-        return $this->authService->loginAs($currentUser, $loginAsUserID);
+        $authData = $this->authService->loginAs($currentUser, $loginAsUserID);
+        $cookie = cookie('token', $authData['token'], env('COOKIE_LIFETIME', 60), null, null, true, true, false, 'Strict');        
+
+        return ApiResponse::sendResponse(data: $authData, message: __('auth.login_succesful'), httpCode: HttpStatusCodes::OK_200, cookie: $cookie);
     }
 
     public function forgotPassword(Request $request): JsonResponse {

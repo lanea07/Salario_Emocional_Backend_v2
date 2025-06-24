@@ -98,7 +98,7 @@ class User extends Authenticatable implements JWTSubject {
 
     public function isAdmin()
     {
-        return $this->hasRoles(['Admin']);
+        return $this->hasRoles(['SuperAdmin']);
     }
 
     public function requirePassChange()

@@ -123,6 +123,6 @@ class UserService {
 
     public function getDatatable() {
         $model = User::with(['dependency', 'parent', 'positions', 'roles']);
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

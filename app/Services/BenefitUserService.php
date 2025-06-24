@@ -173,7 +173,7 @@ class BenefitUserService {
             'benefit_user.benefit_detail',
             'benefit_user.user.dependency'
         ])->where('id', $userId);
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 
     /**
@@ -194,7 +194,7 @@ class BenefitUserService {
             ->whereRelation('user', function ($q) use ($user) {
                 $q->whereIn('id', $user->descendants()->pluck('id'));
             })->is_pending();
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 
     /**

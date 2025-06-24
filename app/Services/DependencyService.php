@@ -110,6 +110,6 @@ class DependencyService
     public function getDatatable()
     {
         $model = Dependency::query();
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

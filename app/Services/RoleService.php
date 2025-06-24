@@ -71,6 +71,6 @@ class RoleService {
 
     public function getDatatable() {
         $model = Role::query();
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

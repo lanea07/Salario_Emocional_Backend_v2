@@ -80,6 +80,6 @@ class BenefitDetailService
     public function getDatatable()
     {
         $model = BenefitDetail::with(['benefit']);
-        return DataTables::of($model)->toJson();
+        return DataTables::of($model)->toJson()->getData();
     }
 }

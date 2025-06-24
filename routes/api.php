@@ -29,9 +29,9 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::get('/user', 'getUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::post('/logout', 'logout')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::put('/user', 'updateUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
-                Route::post('/passwordChange', 'passwordChange');
-                Route::post('login-as', 'loginAs');
-                Route::post('forgot-password', 'forgotPassword')->withoutMiddleware('auth:sanctum');;
+                Route::post('/passwordChange', 'passwordChange')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('login-as', 'loginAs')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('forgot-password', 'forgotPassword')->withoutMiddleware('auth:sanctum')->defaults('permissions', [1, 100])->defaults('endSession', true);
             });
 
             Route::prefix('benefit')->controller(BenefitController::class)->group(function () {
@@ -87,18 +87,16 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::get('/{position}/edit', 'edit')->name('position.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
             });
 
-            // TODO: enable this route with the corresponding values
-            // Route::prefix('role')->controller(RoleController::class)->group(function () {
-            //     Route::get('/role/create', 'create')->name('role.create')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::delete('/role/{role}', 'destroy')->name('role.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::get('/role/{role}/edit', 'edit')->name('role.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::get('/role', 'index')->name('role.index')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::get('/role/{role}', 'show')->name('role.show')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::post('/role', 'store')->name('role.store')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::put('/role/{role}', 'update')->name('role.updateWithPut')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::patch('/role/{role}', 'update')->name('role.updateWithPatch')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            //     Route::post('/role/datatable', 'datatable')->name('role.datatable')->defaults('permissions', [1, 100])->defaults('endSession', true);
-            // });
+            Route::prefix('role')->controller(RoleController::class)->group(function () {
+                Route::get('/', 'index')->name('role.index')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('/role', 'store')->name('role.store')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::put('/update/{role}', 'update')->name('role.updateWithPut')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::patch('/update/{role}', 'update')->name('role.updateWithPatch')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('/datatable', 'datatable')->name('role.datatable')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::delete('/{role}', 'destroy')->name('role.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::get('/{role}', 'show')->name('role.show')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::get('/{role}/edit', 'edit')->name('role.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
+            });
 
             Route::prefix('user')->controller(UserController::class)->group(function () {
                 Route::get('/', 'index')->name('user.index')->defaults('permissions', [1, 100])->defaults('endSession', true);
