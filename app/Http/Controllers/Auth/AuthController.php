@@ -80,10 +80,18 @@ class AuthController extends Controller {
     public function getUser() {
         try {
             $user = Auth::user();
+            $token = auth()->tokenById($user->id);
             if (!$user) {
                 return ApiResponse::sendResponse(message: __('auth.user_not_found'), httpCode: HttpStatusCodes::NOT_FOUND_404);
             }
-            return ApiResponse::sendResponse(data: is_array($user) ? $user : $user->toArray(), httpCode: HttpStatusCodes::OK_200, resetJWT: true);
+
+            $authData = [
+                'token' => $token,
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'actions' => $user->getAllPermissions()->pluck('id')->toArray(),
+                'user' => $user->only('name', 'email', 'id'),
+            ];
+            return ApiResponse::sendResponse(data: $authData, httpCode: HttpStatusCodes::OK_200, resetJWT: true);
         } catch (JWTException $e) {
             return ApiResponse::sendResponse($e->getMessage(), __('auth.failed_fetch_user_profile'), HttpStatusCodes::INTERNAL_SERVER_ERROR_500);
         }

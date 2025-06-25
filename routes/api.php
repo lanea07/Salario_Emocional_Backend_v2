@@ -22,12 +22,12 @@ Route::middleware(['setLocale', 'validateApiVersion'])
             Route::post('/validate-requirePassChange', 'validateRequirePassChange');
             Route::post('/validate-token', 'validateToken');
             Route::post('/validate-roles', 'validateAdmin');
+            Route::get('/auth/user', 'getUser');
         });
 
         Route::middleware(['jwt', 'hasActions'])->group(function () {
 
             Route::prefix('auth')->controller(AuthController::class)->group(function () {
-                Route::get('/user', 'getUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::post('/logout', 'logout')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::put('/user', 'updateUser')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::post('/passwordChange', 'passwordChange')->defaults('permissions', [1, 100])->defaults('endSession', true);
