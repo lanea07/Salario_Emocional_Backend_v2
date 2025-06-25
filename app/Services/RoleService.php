@@ -40,8 +40,8 @@ class RoleService {
      * @param  Role $role
      * @return Role
      */
-    public function getRoleById(Role $role): Role {
-        return $role;
+    public function getRoleById(Role $role): Collection {
+        return $role->with(['permissions'])->get();
     }
 
     /**

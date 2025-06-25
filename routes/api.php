@@ -11,6 +11,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PermissionController;
 
 Route::middleware(['setLocale', 'validateApiVersion'])
     ->group(function () {
@@ -96,6 +97,17 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::delete('/{role}', 'destroy')->name('role.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::get('/{role}', 'show')->name('role.show')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::get('/{role}/edit', 'edit')->name('role.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
+            });
+
+            Route::prefix('permission')->controller(PermissionController::class)->group(function () {
+                Route::get('/', 'index')->name('permission.index')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('/permission', 'store')->name('permission.store')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::put('/update/{permission}', 'update')->name('permission.updateWithPut')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::patch('/update/{permission}', 'update')->name('permission.updateWithPatch')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::post('/datatable', 'datatable')->name('permission.datatable')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::delete('/{permission}', 'destroy')->name('permission.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::get('/{permission}', 'show')->name('permission.show')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::get('/{permission}/edit', 'edit')->name('permission.edit')->defaults('permissions', [1, 100])->defaults('endSession', true);
             });
 
             Route::prefix('user')->controller(UserController::class)->group(function () {
