@@ -164,15 +164,12 @@ class BenefitUserService {
      * @return Collection
      */
     public function getAllBenefitUserNonApproved(int $userId) {
-        $model = User::with([
-            'benefit_user' => function ($q) {
-                $q->where('is_approved', false);
-                $q->orderBy('benefit_begin_time');
-            },
-            'benefit_user.benefits',
-            'benefit_user.benefit_detail',
-            'benefit_user.user.dependency'
-        ])->where('id', $userId);
+        $model = BenefitUser::with([
+            'benefits',
+            'benefit_detail',
+            'user.dependency'
+        ])->where('id', $userId)
+        ->where('is_approved', false);
         return DataTables::of($model)->toJson()->getData();
     }
 
