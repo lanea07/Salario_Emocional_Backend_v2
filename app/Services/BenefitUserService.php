@@ -28,7 +28,8 @@ use Spatie\IcalendarGenerator\Properties\TextProperty;
 use Spatie\IcalendarGenerator\ValueObjects\RRule;
 use Yajra\DataTables\Facades\DataTables;
 
-class BenefitUserService {
+class BenefitUserService
+{
 
     /**
      * Returns all the benefits of a user
@@ -37,7 +38,8 @@ class BenefitUserService {
      * @param int $year
      * @return Collection
      */
-    public function getAllBenefitUser(int $userId, int $year): Collection {
+    public function getAllBenefitUser(int $userId, int $year): Collection
+    {
         return User::with([
             'benefit_user' => function ($q) use ($year) {
                 $q->is_approved();
@@ -63,7 +65,8 @@ class BenefitUserService {
      * @param array $benefitUserData
      * @return BenefitUser
      */
-    public function saveBenefitUser(array $benefitUserData): BenefitUser {
+    public function saveBenefitUser(array $benefitUserData): BenefitUser
+    {
         $created = DB::transaction(function () use ($benefitUserData) {
             $requestedBenefit = Benefit::find($benefitUserData['benefit_id']);
             $bancoHoras = new Collection();
@@ -113,7 +116,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUser
      * @return Collection
      */
-    public function getBenefitUserByID(BenefitUser $benefitUser): Collection {
+    public function getBenefitUserByID(BenefitUser $benefitUser): Collection
+    {
         return User::with([
             'benefit_user' => function ($q) use ($benefitUser) {
                 $q->where('id', $benefitUser->id);
@@ -135,7 +139,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUser
      * @return BenefitUser
      */
-    public function updateBenefitUser(array $benefitUserData, BenefitUser $benefitUser): BenefitUser {
+    public function updateBenefitUser(array $benefitUserData, BenefitUser $benefitUser): BenefitUser
+    {
         $updated = DB::transaction(function () use ($benefitUserData, $benefitUser) {
             $requestedBenefit = Benefit::find($benefitUserData['benefit_id']);
             $this->validateBenefitRules($benefitUserData, $requestedBenefit, BenefitActionIsEnum::UPDATE);
@@ -151,7 +156,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUser
      * @return void
      */
-    public function deleteBenefitUser(BenefitUser $benefitUser): void {
+    public function deleteBenefitUser(BenefitUser $benefitUser): void
+    {
         DB::transaction(function () use ($benefitUser) {
             $benefitUser->delete();
         });
@@ -163,13 +169,15 @@ class BenefitUserService {
      * @param int $userId
      * @return Collection
      */
-    public function getAllBenefitUserNonApproved(int $userId) {
+    public function getAllBenefitUserNonApproved(int $userId)
+    {
         $model = BenefitUser::with([
             'benefits',
             'benefit_detail',
             'user.dependency'
-        ])->where('id', $userId)
-        ->where('is_approved', false);
+        ])
+            ->where('user_id', $userId)
+            ->where('is_approved', false);
         return DataTables::of($model)->toJson()->getData();
     }
 
@@ -179,7 +187,8 @@ class BenefitUserService {
      * @param Request $request
      * @return Collection
      */
-    public function getAllBenefitCollaboratorsNonApproved(Request $request) {
+    public function getAllBenefitCollaboratorsNonApproved(Request $request)
+    {
         $user = $request->user();
         $model = BenefitUser::withWhereHas(
             'user',
@@ -200,7 +209,8 @@ class BenefitUserService {
      * @param Request $request
      * @return Collection
      */
-    public function getAllBenefitCollaborators(Request $request) {
+    public function getAllBenefitCollaborators(Request $request)
+    {
         $user = $request->user();
         return User::where('id', '=', $user->id)->with([
             'descendantsAndSelf.benefit_user' => function ($q) use ($request) {
@@ -229,13 +239,15 @@ class BenefitUserService {
      * @param BenefitUser $benefitUser
      * @return object
      */
-    static function generateICS(BenefitUser $benefitUser) {
+    static function generateICS(BenefitUser $benefitUser)
+    {
         $event = self::generateCalendarEvent($benefitUser);
         $icsAttachment = Calendar::create($benefitUser->user->email)->event([$event]);
         return $icsAttachment->get();
     }
 
-    static private function generateCalendarEvent(BenefitUser $benefitUser): Event {
+    static private function generateCalendarEvent(BenefitUser $benefitUser): Event
+    {
         $newEvent = null;
         if ($benefitUser->benefits->name === "Viernes Corto") {
             $month = date("M", strtotime($benefitUser['benefit_begin_time']));
@@ -272,7 +284,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUser
      * @return BenefitUser
      */
-    public function decideBenefitUser(string $decision, string $decision_comment = null, BenefitUser $benefitUser) {
+    public function decideBenefitUser(string $decision, string $decision_comment = null, BenefitUser $benefitUser)
+    {
         $decision = DB::transaction(function () use ($decision, $decision_comment, $benefitUser) {
             switch ($decision) {
                 case 'approve':
@@ -329,7 +342,8 @@ class BenefitUserService {
      * @param Request $request
      * @return void
      */
-    public function exportBenefits(Request $request) {
+    public function exportBenefits(Request $request)
+    {
         $year = $request->years;
         $user_id = auth()->user()->id;
         $data = ['year' => $year, 'user_id' => $user_id];
@@ -342,7 +356,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUserData
      * @return Collection
      */
-    private function getAdditionalBancoHoras(BenefitUser $benefitUserData): Collection {
+    private function getAdditionalBancoHoras(BenefitUser $benefitUserData): Collection
+    {
         return BenefitUser::with(['benefit_detail'])->where(
             function ($q) use ($benefitUserData) {
                 $q->where('user_id', $benefitUserData->user_id);
@@ -361,7 +376,8 @@ class BenefitUserService {
      * @param BenefitUser $benefitUserData
      * @return Collection
      */
-    private function getAdditionalMiViernes(BenefitUser $benefitUserData): Collection {
+    private function getAdditionalMiViernes(BenefitUser $benefitUserData): Collection
+    {
         return BenefitUser::where(
             function ($q) use ($benefitUserData) {
                 $q->where('user_id', $benefitUserData->user_id);
@@ -382,7 +398,8 @@ class BenefitUserService {
      * @param BenefitActionIs $action
      * @return bool
      */
-    public function validateBenefitRules(array $requestedBenefitData, Benefit $benefit, BenefitActionIsEnum $action) {
+    public function validateBenefitRules(array $requestedBenefitData, Benefit $benefit, BenefitActionIsEnum $action)
+    {
         // Benefit settings that must be evaluated according to benefits rules
         $allowedRepeatFrecuency = $benefit->settings()->get('allowed_repeat_frecuency');
         $allowedRepeatInterval = $benefit->settings()->get('allowed_repeat_interval');
@@ -409,7 +426,8 @@ class BenefitUserService {
      * @param int $year
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getBenefitUserByUserID(User $user, int $year): Collection {
+    public function getBenefitUserByUserID(User $user, int $year): Collection
+    {
         return User::where('id', '=', $user->id)->with([
             'benefit_user' => function ($q) use ($year) {
                 $q->whereYear('benefit_begin_time', $year);
@@ -440,7 +458,8 @@ class BenefitUserService {
      * @param int $year
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function tryCanCombineWith($cantCombineWith, $benefit, $month, $year, $requestedBenefitData) {
+    public function tryCanCombineWith($cantCombineWith, $benefit, $month, $year, $requestedBenefitData)
+    {
         // Setting cant_combine_with
         if ($cantCombineWith !== $benefit->settings()->getDefault('cant_combine_with') || (is_array($cantCombineWith) && !array_search('no aplica', $cantCombineWith, true))) {
             $forbiddenBenefits = BenefitUser::with(['benefits'])
@@ -469,7 +488,8 @@ class BenefitUserService {
      * @param array $requestedBenefitData
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function tryAllowedRepeatFrecuency($allowedRepeatFrecuency, $month, $year, $requestedBenefitData): Collection | bool {
+    public function tryAllowedRepeatFrecuency($allowedRepeatFrecuency, $month, $year, $requestedBenefitData): Collection | bool
+    {
         $initialDate = null;
         $finalDate = null;
         // Setting allowed_repeat_frecuency
@@ -556,7 +576,8 @@ class BenefitUserService {
      * @return void
      * @throws Exception
      */
-    public function tryMaxAllowedHours($maxAllowedHours, $requestedBenefitData, $claimed) {
+    public function tryMaxAllowedHours($maxAllowedHours, $requestedBenefitData, $claimed)
+    {
         // Setting max_allowed_hours
         if ($maxAllowedHours) {
             $requestedTime = BenefitDetail::find($requestedBenefitData['benefit_detail_id'])->time_hours;
@@ -582,7 +603,8 @@ class BenefitUserService {
      * @return void
      * @throws Exception
      */
-    public function tryAllowedRepeatInterval($allowedRepeatInterval, $allowedRepeatFrecuency, $action, $benefit, $claimed, $allowedUpdateApprovedBenefits) {
+    public function tryAllowedRepeatInterval($allowedRepeatInterval, $allowedRepeatFrecuency, $action, $benefit, $claimed, $allowedUpdateApprovedBenefits)
+    {
         // Setting allowed_repeat_interval
         if ($allowedRepeatInterval) {
             if ($action === BenefitActionIsEnum::UPDATE) {
