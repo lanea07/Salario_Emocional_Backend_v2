@@ -93,6 +93,7 @@ Route::middleware(['setLocale', 'validateApiVersion'])
                 Route::post('/role', 'store')->name('role.store')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::put('/update/{role}', 'update')->name('role.updateWithPut')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::patch('/update/{role}', 'update')->name('role.updateWithPatch')->defaults('permissions', [1, 100])->defaults('endSession', true);
+                Route::put('/updateRolePermissions/{role}', 'updateRolePermissions')->name('role.updateRolePermissions')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::post('/datatable', 'datatable')->name('role.datatable')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::delete('/{role}', 'destroy')->name('role.destroy')->defaults('permissions', [1, 100])->defaults('endSession', true);
                 Route::get('/{role}', 'show')->name('role.show')->defaults('permissions', [1, 100])->defaults('endSession', true);

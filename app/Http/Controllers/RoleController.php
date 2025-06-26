@@ -7,20 +7,22 @@ use App\Facades\ApiResponse;
 use App\Services\RoleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRoleRequest;
+use App\Http\Requests\RolePermissionsRequest;
 use Illuminate\Http\JsonResponse;
 use \Spatie\Permission\Models\Role;
 
-class RoleController extends Controller {
+class RoleController extends Controller
+{
 
-    public function __construct(private RoleService $roleService) {
-    }
+    public function __construct(private RoleService $roleService) {}
 
     /**
      * Display a listing of the resource.
      *
      * @return Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse {
+    public function index(): JsonResponse
+    {
         $data = $this->roleService->getAllRoles();
         return ApiResponse::sendResponse($data);
     }
@@ -31,7 +33,8 @@ class RoleController extends Controller {
      * @param  \App\Http\Requests\CreateRoleRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateRoleRequest $request): JsonResponse {
+    public function store(CreateRoleRequest $request): JsonResponse
+    {
         $createdRole = $this->roleService->saveRole($request->validated());
         return ApiResponse::sendResponse($createdRole);
     }
@@ -42,7 +45,8 @@ class RoleController extends Controller {
      * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Role $role): JsonResponse {
+    public function show(Role $role): JsonResponse
+    {
         $data = $this->roleService->getRoleById($role);
         return ApiResponse::sendResponse($data);
     }
@@ -54,7 +58,8 @@ class RoleController extends Controller {
      * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateRoleRequest $request, Role $role): JsonResponse {
+    public function update(CreateRoleRequest $request, Role $role): JsonResponse
+    {
         $updatedRole = $this->roleService->updateRole($request->validated(), $role);
         return ApiResponse::sendResponse($updatedRole);
     }
@@ -65,13 +70,22 @@ class RoleController extends Controller {
      * @param  Role $role
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Role $role): JsonResponse {
+    public function destroy(Role $role): JsonResponse
+    {
         $this->roleService->deleteRole($role);
         return ApiResponse::sendResponse(message: __('controllers/role-controller.role_deleted'), httpCode: HttpStatusCodes::FORBIDDEN_403);
     }
 
-    public function datatable() {
+    public function datatable()
+    {
         $data = $this->roleService->getDatatable();
         return ApiResponse::sendResponse($data);
+    }
+
+    public function updateRolePermissions(RolePermissionsRequest $request, Role $role)
+    {
+        $permissions = collect($request->validated()['permissions'])->pluck('id')->toArray();
+        $role->syncPermissions($permissions);
+        return ApiResponse::sendResponse($role->load(['permissions']));
     }
 }
