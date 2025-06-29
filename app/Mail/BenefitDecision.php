@@ -33,7 +33,7 @@ class BenefitDecision extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: 'Decisión tomada en tu beneficio solicitado',
-            replyTo: 'juan.soto@flamingo.com.co'
+            replyTo: 'juancamilo.soto@outlook.com'
         );
     }
 
@@ -56,11 +56,11 @@ class BenefitDecision extends Mailable implements ShouldQueue
     {
         return $this->benefitUser->is_approved === BenefitDecisionEnum::APPROVED
             ? [
-            Attachment::fromData(
-                fn () =>
-                BenefitUserService::generateICS($this->benefitUser),
-                'invite.ics'
-            )
+                Attachment::fromData(
+                    fn() =>
+                    BenefitUserService::generateICS($this->benefitUser),
+                    'invite.ics'
+                )
             ]
             : [];
     }

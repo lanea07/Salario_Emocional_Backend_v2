@@ -39,7 +39,7 @@ class BenefitUserCreated extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: 'Nuevo Beneficio Registrado',
-            replyTo: 'juan.soto@flamingo.com.co'
+            replyTo: 'juancamilo.soto@outlook.com'
         );
     }
 

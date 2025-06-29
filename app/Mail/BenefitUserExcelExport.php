@@ -35,7 +35,7 @@ class BenefitUserExcelExport extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: 'Resumen de Beneficios',
-            replyTo: 'juan.soto@flamingo.com.co'
+            replyTo: 'juancamilo.soto@outlook.com'
         );
     }
 
@@ -58,7 +58,7 @@ class BenefitUserExcelExport extends Mailable implements ShouldQueue
     {
         return [
             Attachment::fromData(
-                fn () =>
+                fn() =>
                 Excel::raw(new BenefitUserExport($this->data), \Maatwebsite\Excel\Excel::XLSX),
                 'Beneficios.xlsx'
             )->withMime('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')

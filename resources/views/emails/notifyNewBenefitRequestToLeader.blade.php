@@ -161,7 +161,7 @@
                           <table>
                             <tr>
                               <th>
-                                <p><a href="mailto:juan.soto@flamingo.com.co" style="color: #C8102E;">¿Novedades?
+                                <p><a href="mailto:juancamilo.soto@outlook.com" style="color: #C8102E;">¿Novedades?
                                     Reportalas aquí</a><br></p>
                               </th>
                             </tr>

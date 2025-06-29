@@ -11,17 +11,18 @@ use App\Models\Benefit;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BenefitController extends Controller {
+class BenefitController extends Controller
+{
 
-    public function __construct(private BenefitService $benefitService) {
-    }
+    public function __construct(private BenefitService $benefitService) {}
 
     /**
      * Return all benefits
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse {
+    public function index(): JsonResponse
+    {
         $data = $this->benefitService->getAllBenefits();
         return ApiResponse::sendResponse($data);
     }
@@ -32,7 +33,8 @@ class BenefitController extends Controller {
      * @param CreateBenefitRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateBenefitRequest $request): JsonResponse {
+    public function store(CreateBenefitRequest $request): JsonResponse
+    {
         $createdBenefit = $this->benefitService->saveBenefit($request->validated());
         return ApiResponse::sendResponse(data: $createdBenefit, httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
     }
@@ -43,7 +45,8 @@ class BenefitController extends Controller {
      * @param Benefit $benefit
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Benefit $benefit): JsonResponse {
+    public function show(Benefit $benefit): JsonResponse
+    {
         $data = $this->benefitService->getBenefitByID($benefit);
         return ApiResponse::sendResponse($data);
     }
@@ -55,7 +58,8 @@ class BenefitController extends Controller {
      * @param Benefit $benefit
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateBenefitRequest $request, Benefit $benefit): JsonResponse {
+    public function update(CreateBenefitRequest $request, Benefit $benefit): JsonResponse
+    {
         $updatedBenefit = $this->benefitService->updateBenefit($request->validated(), $benefit);
         return ApiResponse::sendResponse(data: $updatedBenefit, httpCode: HttpStatusCodes::OK_200, resetJWT: true);
     }
@@ -66,7 +70,8 @@ class BenefitController extends Controller {
      * @param Benefit $
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Benefit $benefit): JsonResponse {
+    public function destroy(Benefit $benefit): JsonResponse
+    {
         $this->benefitService->deleteBenefit($benefit);
         return ApiResponse::sendResponse(message: __('controllers/benefit-controller.deleted-benefit'), resetJWT: true);
     }
@@ -76,7 +81,8 @@ class BenefitController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function indexAvailable(): JsonResponse {
+    public function indexAvailable(): JsonResponse
+    {
         $data = $this->benefitService->getAllEnabledBenefits();
         return ApiResponse::sendResponse($data);
     }
@@ -86,7 +92,8 @@ class BenefitController extends Controller {
      * 
      * @return JsonResponse
      */
-    public function indexPreferences(): JsonResponse {
+    public function indexPreferences(): JsonResponse
+    {
         $data = $this->benefitService->getAllAvailablePreferences();
         return ApiResponse::sendResponse($data);
     }
@@ -97,7 +104,8 @@ class BenefitController extends Controller {
      * @param Request $request
      * @return JsonResponse
      */
-    public function showPreferences(Benefit $benefit): JsonResponse {
+    public function showPreferences(Benefit $benefit): JsonResponse
+    {
         $data = $this->benefitService->benefitPreferences($benefit);
         return ApiResponse::sendResponse($data);
     }
@@ -108,9 +116,11 @@ class BenefitController extends Controller {
      * @param  Request  $request
      * @return JsonResponse
      */
-    public function storePreferences(Benefit $benefit): JsonResponse {
+    public function storePreferences(Benefit $benefit): JsonResponse
+    {
         $request = request();
-        $this->benefitService->savePreferences($benefit, $request->all());
+        $allowedSettings = array_keys($benefit->settings()->allAllowed()->toArray());
+        $this->benefitService->savePreferences($benefit, $request->all($allowedSettings));
         return ApiResponse::sendResponse(message: __('controllers/benefit-controller.preferences-saved'), httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
     }
 
@@ -119,7 +129,8 @@ class BenefitController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function datatable(): JsonResponse {
+    public function datatable(): JsonResponse
+    {
         $data = $this->benefitService->getDatatable();
         return ApiResponse::sendResponse($data);
     }

@@ -33,7 +33,7 @@ class NotifyNewBenefitRequestToLeader extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: 'Uno de tus colaboradores ha solicitado un beneficio',
-            replyTo: 'juan.soto@flamingo.com.co'
+            replyTo: 'juancamilo.soto@outlook.com'
         );
     }
 

@@ -37,7 +37,7 @@ class NewUserCreated extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: 'Bienvenido(a) a tu Salario Emocional',
-            replyTo: 'juan.soto@flamingo.com.co'
+            replyTo: 'juancamilo.soto@outlook.com'
         );
     }
 

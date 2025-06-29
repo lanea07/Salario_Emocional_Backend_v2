@@ -96,8 +96,8 @@
                                                     <table>
                                                         <tr>
                                                             <th>
-                                                                <p><a href="mailto:juan.soto@flamingo.com.co"
-                                                                        style="color: #C8102E;">juan.soto@flamingo.com.co</a><br>
+                                                                <p><a href="mailto:juancamilo.soto@outlook.com"
+                                                                        style="color: #C8102E;">juancamilo.soto@outlook.com</a><br>
                                                                     Reportar Novedad</p>
                                                             </th>
                                                         </tr>
