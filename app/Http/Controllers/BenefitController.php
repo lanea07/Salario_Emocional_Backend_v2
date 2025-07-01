@@ -119,7 +119,7 @@ class BenefitController extends Controller
     public function storePreferences(Benefit $benefit): JsonResponse
     {
         $request = request();
-        $allowedSettings = array_keys($benefit->settings()->allAllowed()->toArray());
+        $allowedSettings = $benefit->settings()->allAllowed()->keys()->toArray();
         $this->benefitService->savePreferences($benefit, $request->all($allowedSettings));
         return ApiResponse::sendResponse(message: __('controllers/benefit-controller.preferences-saved'), httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
     }
