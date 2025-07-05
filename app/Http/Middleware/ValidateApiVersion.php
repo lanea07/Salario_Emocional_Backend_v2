@@ -8,13 +8,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ValidateApiVersion {
+class ValidateApiVersion
+{
 
     // Define the allowed versions
     protected array $allowedVersions = ['v1', 'v2'];
 
-    public function handle(Request $request, Closure $next): Response {
-        $version = $request->query('version');
+    public function handle(Request $request, Closure $next): Response
+    {
+        $version = $request->route('version');
+        $request->route()->forgetParameter('version');
 
         if (!in_array($version, $this->allowedVersions, true)) {
             $data = [

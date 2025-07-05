@@ -8,14 +8,13 @@ use App\Services\TempTableService;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\App;
 
-class ApiServiceProvider extends ServiceProvider {
+class ApiServiceProvider extends ServiceProvider
+{
     /**
      * Register services.
      */
-    public function register(): void {
-        $this->app->bind(ApiResponseContract::class, function () {
-            return ApiResponseFactory::make();
-        });
+    public function register(): void
+    {
         $this->app->singleton('tempTable', function () {
             return new TempTableService();
         });
@@ -24,7 +23,12 @@ class ApiServiceProvider extends ServiceProvider {
     /**
      * Bootstrap services.
      */
-    public function boot(): void {
+    public function boot(): void
+    {
+        $request = request()->path();
+        $this->app->bind(ApiResponseContract::class, function () use ($request) {
+            return ApiResponseFactory::make($request);
+        });
         App::setLocale(env('APP_LOCALE', 'es'));
     }
 }
