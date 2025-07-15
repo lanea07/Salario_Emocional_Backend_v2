@@ -16,7 +16,7 @@ class ApiResponseFormatterService
     {
         $path = $request->path();
         // Check if the path starts with version pattern (v1, v2, etc.)
-        return preg_match('/^(v\d+)\//', $path);
+        return preg_match('/^api\/(v\d+)\//', $path);
     }
 
     /**
