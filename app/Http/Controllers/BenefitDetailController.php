@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\HttpStatusCodes;
-use App\Facades\ApiResponse;
+use App\Framework\Enums\HttpStatusCodes;
+use App\Framework\Facades\ApiResponse;
 use App\Services\BenefitDetailService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateBenefitDetailRequest;
 use App\Models\BenefitDetail;
 use Illuminate\Http\JsonResponse;
 
-class BenefitDetailController extends Controller {
+class BenefitDetailController extends Controller
+{
 
-    public function __construct(private BenefitDetailService $benefitDetailService) {
-    }
+    public function __construct(private BenefitDetailService $benefitDetailService) {}
 
     /**
      * Return all benefit details
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse {
+    public function index(): JsonResponse
+    {
         $data = $this->benefitDetailService->getAllBenefitDetail();
         return ApiResponse::sendResponse($data);
     }
@@ -31,7 +32,8 @@ class BenefitDetailController extends Controller {
      * @param \App\Http\Requests\CreateBenefitDetailRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateBenefitDetailRequest $request): JsonResponse {
+    public function store(CreateBenefitDetailRequest $request): JsonResponse
+    {
         $createdBenefitDetail = $this->benefitDetailService->saveBenefitDetail($request->name);
         return ApiResponse::sendResponse(data: $createdBenefitDetail, httpCode: HttpStatusCodes::CREATED_201, resetJWT: true);
     }
@@ -42,7 +44,8 @@ class BenefitDetailController extends Controller {
      * @param BenefitDetail $benefitdetail
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(BenefitDetail $benefitdetail): JsonResponse {
+    public function show(BenefitDetail $benefitdetail): JsonResponse
+    {
         $data = $this->benefitDetailService->getBenefitDetailByID($benefitdetail);
         return ApiResponse::sendResponse($data);
     }
@@ -54,7 +57,8 @@ class BenefitDetailController extends Controller {
      * @param BenefitDetail $benefitdetail
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateBenefitDetailRequest $request, BenefitDetail $benefitdetail): JsonResponse {
+    public function update(CreateBenefitDetailRequest $request, BenefitDetail $benefitdetail): JsonResponse
+    {
         $updatedBenefitDetail = $this->benefitDetailService->updateBenefitDetail($request->validated(), $benefitdetail);
         return ApiResponse::sendResponse($updatedBenefitDetail);
     }
@@ -65,7 +69,8 @@ class BenefitDetailController extends Controller {
      * @param BenefitDetail $benefitdetail
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(BenefitDetail $benefitdetail): JsonResponse {
+    public function destroy(BenefitDetail $benefitdetail): JsonResponse
+    {
         $this->benefitDetailService->deleteBenefitDetail($benefitdetail);
         return ApiResponse::sendResponse(message: __('controllers/benefit-detail-controller.deleted-benefit-detail'), resetJWT: true);
     }
@@ -75,7 +80,8 @@ class BenefitDetailController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function datatable() {
+    public function datatable()
+    {
         return ApiResponse::sendResponse($this->benefitDetailService->getDatatable());
     }
 }

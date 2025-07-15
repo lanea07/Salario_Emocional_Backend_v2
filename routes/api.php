@@ -1,5 +1,6 @@
 <?php
 
+use App\Framework\Controllers\Auth\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BenefitController;
 use App\Http\Controllers\BenefitDetailController;
@@ -10,7 +11,6 @@ use App\Http\Controllers\PreferencesController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PermissionController;
 
 Route::prefix('{version}/{lang}')

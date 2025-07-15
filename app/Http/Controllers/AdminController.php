@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\ApiResponse;
+use App\Framework\Facades\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Services\AdminService;
 use Illuminate\Http\JsonResponse;
@@ -11,9 +11,7 @@ use Illuminate\Http\Request;
 class AdminController extends Controller
 {
 
-    public function __construct(private AdminService $adminService)
-    {
-    }
+    public function __construct(private AdminService $adminService) {}
 
     /**
      * Return all users benefits using the filters in the request

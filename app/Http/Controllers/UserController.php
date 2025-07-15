@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\HttpStatusCodes;
-use App\Facades\ApiResponse;
+use App\Framework\Enums\HttpStatusCodes;
+use App\Framework\Facades\ApiResponse;
 use App\Services\UserService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
-class UserController extends Controller {
+class UserController extends Controller
+{
 
-    public function __construct(private UserService $userService) {
-    }
+    public function __construct(private UserService $userService) {}
 
     /**
      * Return all users
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(): JsonResponse {
+    public function index(): JsonResponse
+    {
         $data = $this->userService->getAllUsers();
         return ApiResponse::sendResponse($data);
     }
@@ -32,7 +33,8 @@ class UserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(CreateUserRequest $request): JsonResponse {
+    public function store(CreateUserRequest $request): JsonResponse
+    {
         try {
             $createdUser = $this->userService->saveUser($request->validated());
             return ApiResponse::sendResponse(data: $createdUser, httpCode: HttpStatusCodes::CREATED_201);
@@ -61,7 +63,8 @@ class UserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(User $user): JsonResponse {
+    public function show(User $user): JsonResponse
+    {
         $data = $this->userService->getUserById($user);
         return ApiResponse::sendResponse($data);
     }
@@ -74,7 +77,8 @@ class UserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(CreateUserRequest $request, User $user): JsonResponse {
+    public function update(CreateUserRequest $request, User $user): JsonResponse
+    {
         try {
             $updatedUser = $this->userService->updateUser($request->validated(), $user);
             return ApiResponse::sendResponse($updatedUser);
@@ -103,7 +107,8 @@ class UserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(User $user): JsonResponse {
+    public function destroy(User $user): JsonResponse
+    {
         $this->userService->deleteUser($user);
         return ApiResponse::sendResponse(message: __('controllers/user-controller.user_deleted'), httpCode: HttpStatusCodes::FORBIDDEN_403);
     }
@@ -113,12 +118,14 @@ class UserController extends Controller {
      * 
      * @return \Illuminate\Http\JsonResponse
      */
-    public function indexDescendants(): JsonResponse {
+    public function indexDescendants(): JsonResponse
+    {
         $data = $this->userService->getAllDescendants();
         return ApiResponse::sendResponse($data);
     }
 
-    public function datatable(): JsonResponse {
+    public function datatable(): JsonResponse
+    {
         $data = $this->userService->getDatatable();
         return ApiResponse::sendResponse($data);
     }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\HttpStatusCodes;
-use App\Facades\ApiResponse;
+use App\Framework\Enums\HttpStatusCodes;
+use App\Framework\Facades\ApiResponse;
 use App\Services\RoleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateRoleRequest;
