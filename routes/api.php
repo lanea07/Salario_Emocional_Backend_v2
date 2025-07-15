@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PermissionController;
 
 Route::prefix('{version}/{lang}')
-    ->middleware(['setLocale', 'validateApiVersion'])
     ->group(function () {
 
         Route::controller(AuthController::class)->group(function () {

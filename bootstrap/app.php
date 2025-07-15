@@ -23,15 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'setLocale' => SetLocale::class,
             'jwt' => JwtMiddleware::class,
             'hasActions' => ValidateActions::class,
-            'validateApiVersion' => ValidateApiVersion::class,
-            'formatApiResponse' => FormatApiResponse::class
         ]);
 
-        // Apply response formatting to all API routes
+        // Apply middleware to all API routes
         $middleware->api(append: [
+            SetLocale::class,
+            ValidateApiVersion::class,
             FormatApiResponse::class,
         ]);
     })
