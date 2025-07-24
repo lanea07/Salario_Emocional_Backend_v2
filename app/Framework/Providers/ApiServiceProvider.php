@@ -17,16 +17,14 @@ class ApiServiceProvider extends ServiceProvider
         $this->app->singleton('tempTable', function () {
             return new TempTableService();
         });
+
+        $this->app->bind(ApiResponseContract::class, function () {
+            return ApiResponseFactory::make();
+        });
     }
 
     /**
      * Bootstrap services.
      */
-    public function boot(): void
-    {
-        $request = request()->path();
-        $this->app->bind(ApiResponseContract::class, function () use ($request) {
-            return ApiResponseFactory::make($request);
-        });
-    }
+    public function boot(): void {}
 }

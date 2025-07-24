@@ -9,9 +9,9 @@ use App\Framework\Services\ApiV2ResponseService;
 class ApiResponseFactory
 {
 
-    public static function make($path): ApiResponseContract
+    public static function make(): ApiResponseContract
     {
-        $version = explode('/', $path)[1] ?? 'v1';
+        $version = app('route.version');
 
         if (str_starts_with($version, 'v2')) {
             return new ApiV2ResponseService();

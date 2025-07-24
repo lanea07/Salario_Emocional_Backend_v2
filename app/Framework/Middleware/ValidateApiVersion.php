@@ -6,6 +6,7 @@ use App\Framework\Enums\HttpStatusCodes;
 use App\Framework\Facades\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Symfony\Component\HttpFoundation\Response;
 
 class ValidateApiVersion
@@ -17,6 +18,7 @@ class ValidateApiVersion
     public function handle(Request $request, Closure $next): Response
     {
         $version = $request->route('version');
+        App::instance('route.version', $version);
         $request->route()->forgetParameter('version');
 
         if (!in_array($version, $this->allowedVersions, true)) {
