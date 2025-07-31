@@ -11,7 +11,12 @@ class ApiResponseFactory
 
     public static function make(): ApiResponseContract
     {
-        $version = app('route.version');
+        try {
+            $version = app('app.api.version');
+        } catch (\Exception $e) {
+            // Fallback to default version if not set
+            $version = 'v1';
+        }
 
         if (str_starts_with($version, 'v2')) {
             return new ApiV2ResponseService();
